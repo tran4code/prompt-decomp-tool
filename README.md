@@ -1,46 +1,138 @@
-# Getting Started with Create React App
+# Prompt-Based Programming Environment
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React application that allows users to build Python programs using modular visual blocks, each representing a single function created through natural language prompts.
+
+## Features
+
+🧩 **Function Blocks**: Each block contains:
+- User-written natural language prompt
+- Auto-generated Python function code
+- Brief description of functionality
+- Test cases with input/output validation
+- Pass/fail indicators
+
+🔗 **Visual Composition**: 
+- Drag and connect blocks to create function pipelines
+- Output of one block becomes input of the next
+- Visual flowchart-style connections
+
+🧭 **Zoomable Canvas**:
+- Zoom out: Compact view with function name and test status
+- Zoom in: Detailed view with full code, prompts, and test cases
+- Controls for navigation and mini-map
+
+⚙️ **Interactive Features**:
+- Click blocks to edit prompts and test cases
+- Auto-save to localStorage
+- Regenerate code from updated prompts
+- Real-time test execution and validation
+
+## Getting Started
+
+1. **Installation**:
+   ```bash
+   npm install
+   ```
+
+2. **Run the application**:
+   ```bash
+   npm start
+   ```
+
+3. **Open your browser** to `http://localhost:3000`
+
+## How to Use
+
+1. **Create a Function Block**:
+   - Click the "+ Add Function Block" button
+   - Click on the prompt area to edit
+   - Enter a natural language description (e.g., "Filter odd numbers and square them")
+   - Click "Regenerate" to generate Python code
+
+2. **Add Test Cases**:
+   - Click "Expand" in the test cases section
+   - Click "+ Add Test Case"
+   - Enter input and expected output
+   - The system will automatically run tests and show pass/fail status
+
+3. **Connect Blocks**:
+   - Drag from the right handle of one block to the left handle of another
+   - Connected blocks will pass data through the pipeline
+
+4. **Navigate the Canvas**:
+   - Use mouse wheel to zoom in/out
+   - Drag to pan around the canvas
+   - Use the mini-map for quick navigation
+
+## Example Prompts
+
+Try these example prompts to see the system in action:
+
+- "Filter odd numbers from a list"
+- "Square each number in a list"
+- "Sum all numbers in a list"
+- "Filter positive numbers"
+- "Double each number"
+- "Sort numbers in ascending order"
+- "Reverse the order of items"
+
+## Example Test Cases
+
+For a "filter odd numbers" function:
+- Input: `[1, 2, 3, 4, 5, 6]`
+- Expected Output: `[2, 4, 6]`
+
+For a "square numbers" function:
+- Input: `[1, 2, 3, 4]`
+- Expected Output: `[1, 4, 9, 16]`
+
+## Technical Implementation
+
+- **React + TypeScript**: Core framework
+- **React Flow**: Canvas and node management
+- **localStorage**: Persistent storage
+- **Simulated Code Generation**: Pattern matching for common operations
+- **Real-time Test Execution**: JavaScript simulation of Python functions
+
+## Architecture
+
+```
+src/
+├── components/
+│   ├── Canvas.tsx          # Main canvas with React Flow
+│   └── FunctionBlock.tsx   # Individual function block component
+├── types.ts                # TypeScript interfaces
+├── utils/
+│   ├── codeGeneration.ts   # Prompt-to-code conversion
+│   └── storage.ts          # localStorage utilities
+└── App.tsx                 # Main application
+```
 
 ## Available Scripts
 
-In the project directory, you can run:
-
 ### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Runs the app in development mode at [http://localhost:3000](http://localhost:3000)
 
 ### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Launches the test runner in interactive watch mode
 
 ### `npm run build`
+Builds the app for production to the `build` folder
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Future Enhancements
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Integration with real Python execution environment
+- LLM-based code generation (OpenAI/Anthropic APIs)
+- Export to actual Python files
+- More sophisticated test frameworks
+- Collaborative editing features
+- Template library for common functions
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Contributing
 
-### `npm run eject`
+This is a prototype implementation. The code generation currently uses pattern matching for demonstration purposes. In a production environment, you would integrate with:
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Python execution sandboxes (PyOdide, Skulpt)
+- Large Language Models for code generation
+- More sophisticated test frameworks
+- Real-time collaboration features
