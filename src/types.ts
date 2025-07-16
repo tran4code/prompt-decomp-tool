@@ -23,8 +23,17 @@ export interface ConnectionData {
   targetBlockId: string;
 }
 
+export interface CSVBlockData {
+  id: string;
+  csvData: any[] | null;
+  fileName: string;
+  preview: string;
+  position: { x: number; y: number };
+}
+
 export interface CanvasState {
   blocks: FunctionBlockData[];
+  csvBlocks: CSVBlockData[];
   connections: ConnectionData[];
   zoom: number;
 }

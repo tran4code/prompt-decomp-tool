@@ -13,12 +13,14 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 
 import FunctionBlock from './FunctionBlock';
-import { FunctionBlockData, TestCase } from '../types';
+import { CSVUploadBlock } from './CSVUploadBlock';
+import { FunctionBlockData, TestCase, CSVBlockData } from '../types';
 import { generateCodeFromPrompt, executeTests } from '../utils/codeGeneration';
 import { saveCanvasState, loadCanvasState } from '../utils/storage';
 
 const nodeTypes: NodeTypes = {
   functionBlock: FunctionBlock,
+  csvBlock: CSVUploadBlock,
 };
 
 const Canvas: React.FC = () => {
@@ -29,12 +31,20 @@ const Canvas: React.FC = () => {
   useEffect(() => {
     const savedState = loadCanvasState();
     if (savedState) {
-      const loadedNodes = savedState.blocks.map(block => ({
-        id: block.id,
-        type: 'functionBlock',
-        position: block.position,
-        data: block,
-      }));
+      const loadedNodes = [
+        ...savedState.blocks.map(block => ({
+          id: block.id,
+          type: 'functionBlock',
+          position: block.position,
+          data: block,
+        })),
+        ...(savedState.csvBlocks || []).map(csvBlock => ({
+          id: csvBlock.id,
+          type: 'csvBlock',
+          position: csvBlock.position,
+          data: csvBlock,
+        }))
+      ];
       
       const loadedEdges = savedState.connections.map(conn => ({
         id: conn.id,
@@ -51,7 +61,8 @@ const Canvas: React.FC = () => {
   useEffect(() => {
     if (nodes.length > 0 || edges.length > 0) {
       const canvasState = {
-        blocks: nodes.map(node => node.data as FunctionBlockData),
+        blocks: nodes.filter(node => node.type === 'functionBlock').map(node => node.data as FunctionBlockData),
+        csvBlocks: nodes.filter(node => node.type === 'csvBlock').map(node => node.data as CSVBlockData),
         connections: edges.map(edge => ({
           id: edge.id,
           sourceBlockId: edge.source,
@@ -77,14 +88,25 @@ const Canvas: React.FC = () => {
     if (inputEdge) {
       // Get the source block's output
       const sourceNode = allNodes.find(n => n.id === inputEdge.source);
-      if (sourceNode && sourceNode.data.generatedCode) {
-        // Use the first test case's actual output as input, or a default value
-        const sourceOutput = sourceNode.data.testCases.length > 0 
-          ? sourceNode.data.testCases[0].actualOutput 
-          : '[]';
-        inputOverride = sourceOutput;
-        isConnected = true;
-        connectedInput = sourceOutput;
+      if (sourceNode) {
+        if (sourceNode.type === 'csvBlock') {
+          // Handle CSV block output
+          const getOutput = (window as any)[`getNodeOutput_${sourceNode.id}`];
+          if (getOutput) {
+            const csvData = getOutput();
+            inputOverride = JSON.stringify(csvData);
+            isConnected = true;
+            connectedInput = inputOverride;
+          }
+        } else if (sourceNode.data.generatedCode) {
+          // Use the first test case's actual output as input, or a default value
+          const sourceOutput = sourceNode.data.testCases.length > 0 
+            ? sourceNode.data.testCases[0].actualOutput 
+            : '[]';
+          inputOverride = sourceOutput;
+          isConnected = true;
+          connectedInput = sourceOutput;
+        }
       }
     }
 
@@ -204,6 +226,26 @@ const Canvas: React.FC = () => {
     setNodes((nds) => [...nds, newNode]);
   }, [setNodes, handlePromptChange, handleTestCaseChange, handleRegenerate]);
 
+  const addNewCSVBlock = useCallback(() => {
+    const newId = `csv-${Date.now()}`;
+    const newCSVData: CSVBlockData = {
+      id: newId,
+      csvData: null,
+      fileName: '',
+      preview: '',
+      position: { x: Math.random() * 400, y: Math.random() * 400 },
+    };
+
+    const newNode: Node = {
+      id: newId,
+      type: 'csvBlock',
+      position: newCSVData.position,
+      data: newCSVData,
+    };
+
+    setNodes((nds) => [...nds, newNode]);
+  }, [setNodes]);
+
   const nodeData = useMemo(() => {
     return nodes.map((node) => ({
       ...node,
@@ -241,6 +283,21 @@ const Canvas: React.FC = () => {
           }}
         >
           + Add Function Block
+        </button>
+        <button 
+          onClick={addNewCSVBlock}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#10B981',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '14px',
+            marginLeft: '8px'
+          }}
+        >
+          + Add CSV Upload
         </button>
       </div>
 

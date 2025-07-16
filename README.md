@@ -11,10 +11,17 @@ A React application that allows users to build Python programs using modular vis
 - Test cases with input/output validation
 - Pass/fail indicators
 
+📊 **CSV Data Blocks**:
+- Upload CSV files directly to the canvas
+- Visual preview of data with expandable table view
+- Connect to function blocks for data processing
+- Supports filtering, extraction, and transformation operations
+
 🔗 **Visual Composition**: 
 - Drag and connect blocks to create function pipelines
 - Output of one block becomes input of the next
 - Visual flowchart-style connections
+- Mix CSV data sources with function blocks
 
 🧭 **Zoomable Canvas**:
 - Zoom out: Compact view with function name and test status
@@ -49,17 +56,24 @@ A React application that allows users to build Python programs using modular vis
    - Enter a natural language description (e.g., "Filter odd numbers and square them")
    - Click "Regenerate" to generate Python code
 
-2. **Add Test Cases**:
+2. **Upload CSV Data**:
+   - Click the "+ Add CSV Upload" button
+   - Click "Choose CSV File" to upload your CSV file
+   - The block will display a preview of your data
+   - Connect the CSV block to function blocks to process the data
+
+3. **Add Test Cases**:
    - Click "Expand" in the test cases section
    - Click "+ Add Test Case"
    - Enter input and expected output
    - The system will automatically run tests and show pass/fail status
 
-3. **Connect Blocks**:
+4. **Connect Blocks**:
    - Drag from the right handle of one block to the left handle of another
    - Connected blocks will pass data through the pipeline
+   - CSV blocks can be connected to function blocks for data processing
 
-4. **Navigate the Canvas**:
+5. **Navigate the Canvas**:
    - Use mouse wheel to zoom in/out
    - Drag to pan around the canvas
    - Use the mini-map for quick navigation
@@ -75,6 +89,12 @@ Try these example prompts to see the system in action:
 - "Double each number"
 - "Sort numbers in ascending order"
 - "Reverse the order of items"
+
+### CSV-specific prompts:
+- "Filter CSV by age greater than 18"
+- "Extract column from CSV data"
+- "Count rows in CSV"
+- "Filter CSV by column value"
 
 ## Example Test Cases
 

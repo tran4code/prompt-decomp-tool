@@ -86,6 +86,49 @@ export function generateCodeFromPrompt(prompt: string): {
     };
   }
   
+  // CSV-specific operations
+  if (promptLower.includes('csv') && promptLower.includes('filter')) {
+    if (promptLower.includes('age') || promptLower.includes('greater') || promptLower.includes('above')) {
+      return {
+        generatedCode: `def filter_by_age(data, min_age=18):
+    """Filter CSV data by age threshold."""
+    return [row for row in data if int(row.get('age', 0)) >= min_age]`,
+        description: 'Filters CSV rows where age is greater than or equal to threshold.',
+        functionName: 'filter_by_age'
+      };
+    }
+    
+    if (promptLower.includes('column') || promptLower.includes('field')) {
+      return {
+        generatedCode: `def filter_by_column(data, column, value):
+    """Filter CSV data by column value."""
+    return [row for row in data if row.get(column) == value]`,
+        description: 'Filters CSV rows where specified column matches value.',
+        functionName: 'filter_by_column'
+      };
+    }
+  }
+  
+  if (promptLower.includes('csv') && promptLower.includes('extract')) {
+    return {
+      generatedCode: `def extract_column(data, column_name):
+    """Extract values from a specific column."""
+    return [row.get(column_name, '') for row in data]`,
+      description: 'Extracts all values from a specific column in CSV data.',
+      functionName: 'extract_column'
+    };
+  }
+  
+  if (promptLower.includes('csv') && promptLower.includes('count')) {
+    return {
+      generatedCode: `def count_rows(data):
+    """Count number of rows in CSV data."""
+    return len(data)`,
+      description: 'Returns the total number of rows in CSV data.',
+      functionName: 'count_rows'
+    };
+  }
+  
   // Default case - create a simple template
   const functionName = promptLower.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_').substring(0, 20) || 'custom_function';
   
@@ -181,6 +224,36 @@ function simulateExecution(code: string, input: string): string {
       if (Array.isArray(inputValue)) {
         const result = [...inputValue].reverse();
         return JSON.stringify(result);
+      }
+    }
+    
+    // CSV operations
+    if (code.includes('filter_by_age')) {
+      if (Array.isArray(inputValue) && inputValue.length > 0 && typeof inputValue[0] === 'object') {
+        const result = inputValue.filter(row => parseInt(row.age || '0') >= 18);
+        return JSON.stringify(result);
+      }
+    }
+    
+    if (code.includes('filter_by_column')) {
+      // Simple simulation - would need actual column/value parameters in real implementation
+      if (Array.isArray(inputValue)) {
+        return JSON.stringify(inputValue);
+      }
+    }
+    
+    if (code.includes('extract_column')) {
+      if (Array.isArray(inputValue) && inputValue.length > 0 && typeof inputValue[0] === 'object') {
+        // Extract first available column as example
+        const firstKey = Object.keys(inputValue[0])[0];
+        const result = inputValue.map(row => row[firstKey]);
+        return JSON.stringify(result);
+      }
+    }
+    
+    if (code.includes('count_rows')) {
+      if (Array.isArray(inputValue)) {
+        return JSON.stringify(inputValue.length);
       }
     }
     
